@@ -3,15 +3,15 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 		<title>reveal.js</title>
-
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
-
+		<link rel="stylesheet" href="css/theme/beige.css" id="theme">
+		<link rel="stylesheet" href="assets/css/custom.css">
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
-
+		<!--
+		<link rel="stylesheet" href="lib/css/ascetic.css">
+		-->
+		<link rel="stylesheet" href="lib/css/arta.css">
 		<!-- Printing and PDF exports -->
 		<script>
 			var link = document.createElement( 'link' );
@@ -24,19 +24,715 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h1>Git</h1>
+				</section>
+				<section id="fragments" data-background-image=assets/images/bg.jpg>
+					<h2>init</h2>
+					<pre><code data-trim>
+						git init
+						Initialized empty Git repository in /private/tmp/git-tutos/.git/
+					</code></pre>
+					<img class="fragment" height="430" data-src="assets/images/tree.git.png" />
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>Les arcanes</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<img data-src="assets/images/data-model-3.png" height="538"/>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<img data-src="assets/images/data-model-4.png" height="538"/>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>Les hooks</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+						.git/hooks
+						├── applypatch-msg.sample
+						├── commit-msg.sample
+						├── post-update.sample
+						├── pre-applypatch.sample
+						├── pre-commit.sample
+						├── pre-push.sample
+						├── pre-rebase.sample
+						├── pre-receive.sample
+						├── prepare-commit-msg.sample
+						└── update.sample
+						
+						0 directories, 10 files
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							#! /bin/bash
+							
+							declare -A PATTERNS;
+							PATTERNS['^[&lt;>|=]{4,}']="Vous avez des marqueurs de conflits qui traînent";
+							PATTERNS['TODO|FIXME']="Vous avez des tâches non terminées (FIXME/TODO)";
+							
+							declare -a errors;
+							
+							for file in $(git diff --staged --name-only --diff-filter=ACM); do
+							  for elem in ${!PATTERNS[*]} ; do
+							    { git show :0:"$file" | grep -Eq ${elem}; } || continue;
+							    errors+=("${PATTERNS[${elem}]} in ${file}…");
+							  done
+							done
+							
+							author=$(git config --get user.name)
+							for error in "${errors[@]}"; do
+							  echo -e "\[\033[1;31m\]${error}\[\033[0m\]"
+							  which -s say && say -v Samantha -r 250 "$author $error"
+							done
+							
+							if [ ${#errors[@]} -ne 0 ]; then
+							  exit 1
+							fi
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<h3>Grumphp</h3>
+						<pre><code data-trim>
+							parameters:
+							bin_dir: "./vendor/bin"
+							git_dir: "."
+							hooks_dir: ~
+							ascii:
+							    failed: grumphp-grumpy.txt
+							    succeeded: grumphp-happy.txt
+							tasks:
+							    atoum: ~
+							    behat: ~
+							    brunch: ~
+							    clover_coverage: ~
+							    codeception: ~
+							    composer: ~
+							    composer_require_checker: ~
+							    composer_script: ~
+							    deptrac: ~
+							    doctrine_orm: ~
+							    file_size: ~
+							    gherkin: ~
+							    git_blacklist: ~
+							    git_branch_name: ~
+							    git_commit_message: ~
+							    grunt: ~
+							    gulp: ~
+							    infection: ~
+							    jsonlint: ~
+							    kahlan: ~
+							    make: ~
+							    npm_script: ~
+							    phan: ~
+							    phing: ~
+							    php7cc: ~
+							    phpcpd: ~
+							    phpcs: ~
+							    phpcsfixer: ~
+							    phpcsfixer2: ~
+							    phplint: ~
+							    phpmd: ~
+							    phpmnd: ~
+							    phpparser: ~
+							    phpspec: ~
+							    phpstan: ~
+							    phpunit: ~
+							    phpversion: ~
+							    progpilot: ~
+							    psalm: ~
+							    robo: ~
+							    securitychecker: ~
+							    shell: ~
+							    xmllint: ~
+							    yamllint: ~
+							testsuites: []
+							extensions: []
+						</code></pre>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>config</h2>
+					<pre><code data-trim>
+						git config -l
+						git config --global user.name “Nom”
+						git config --global user.email “email”
+						git config --global branch.autosetuprebase always
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>status</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git status
+						</code></pre>
+						<pre><code data-trim>
+							On branch master
+							Your branch is up to date with 'origin/master'.
+							
+							Changes not staged for commit:
+							  (use "git add &lt;file>..." to update what will be committed)
+							  (use "git checkout -- &lt;file>..." to discard changes in working directory)
+							
+								modified:   index.html
+							
+							Untracked files:
+							  (use "git add &lt;file>..." to include in what will be committed)
+							
+								assets/
+								lib/css/agate.css
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							On branch master
+							Your branch is up to date with 'origin/master'.
+							
+							Changes to be committed:
+							  (use "git reset HEAD &lt;file>..." to unstage)
+							
+								modified:   index.html
+							
+							Untracked files:
+							  (use "git add &lt;file>..." to include in what will be committed)
+							
+								assets/
+								lib/css/agate.css
+						</code></pre>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>add</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git add file|folder|*.ext
+							git add --all
+							git add -p
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							@@ -267,6 +403,7 @@
+							 			&lt;li>https://github.com/torvalds/subsurface-for-dirk/blob/master/README#L92-L112&lt;/li>
+							 			&lt;li>https://github.com/torvalds/linux/pull/17#issuecomment-5659933&lt;/li>
+							 			&lt;li>https://yarchive.net/comp/linux/commit_messages.html&lt;/li>
+							+			&lt;li>https://github.com/phpro/grumphp&lt;/li>
+							 		&lt;/ul>
+							 	&lt;/section>
+							 &lt;/div>
+							Stage this hunk [y,n,q,a,d,/,K,g,e,?]?
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							Stage this hunk [y,n,q,a,d,/,K,g,e,?]? ?
+							y - stage this hunk
+							n - do not stage this hunk
+							q - quit; do not stage this hunk or any of the remaining ones
+							a - stage this hunk and all later hunks in the file
+							d - do not stage this hunk or any of the later hunks in the file
+							g - select a hunk to go to
+							/ - search for a hunk matching the given regex
+							j - leave this hunk undecided, see next undecided hunk
+							J - leave this hunk undecided, see next hunk
+							k - leave this hunk undecided, see previous undecided hunk
+							K - leave this hunk undecided, see previous hunk
+							s - split the current hunk into smaller hunks
+							e - manually edit the current hunk
+							? - print help
+						</code></pre>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>commit</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git commit
+							git commit --fixup
+							git commit --message “Commit message”
+							git commit --gpg-sign
+						</code></pre>
+					</section>
+					<section id="fragments" data-background-image=assets/images/bg.jpg>
+						<img class="fragment" data-src=assets/images/linus-torvald-Intel.jpg />
+						<br/>
+						<q class="fragment">Linus Benedict Torvalds</q>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<q style="text-align:left;font-size:0.6em" cite="https://yarchive.net/comp/linux/commit_messages.html">
+							If it's not fairly generic, specify the area (architecture, subsystem,
+							driver) that the fix is for in the subject line. Even if you end up
+							initially sending the fix out to just a list that handles that
+							particular subsystem anyway.
+						</q>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<q style="text-align:left;font-size:0.6em" cite="https://yarchive.net/comp/linux/commit_messages.html">
+							Don't use commit names in the subject line - and while it's great to
+							use them in the body of the explanation, even there you don't want to
+							assume that people read it from within git. People see patches and
+							commit changelogs on the web or the commit mailing lists, so when
+							specifying an exact version, also specify the human-readable name of
+							that version.
+						</q>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<q style="text-align:left;font-size:0.6em" cite="https://yarchive.net/comp/linux/commit_messages.html">
+							Write the commit message for an outsider, and use whitespace. The
+							third-most common fixup I end up doing (after the above two) is to
+							split things up into shorter paragraphs, after somebody wrote a good
+							changelog entry, but made it one large unreadable blob of text. The
+							more involved and technical some description is (and that's what long
+							changelog entries should be - we don't want a fluffy novella here!),
+							the more "breather space" and individually understandable small
+							snippets of text readers need. Making things too dense is bad.
+						</q>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>A good commit message looks like</h2>
+					<p style="text-align:left;font-size:0.6em">
+						<b>Header line:</b> explain the commit in one line (use the imperative)
+					</p>
+					<p style="text-align:left;font-size:0.6em">
+						Body of commit message is a few lines of text, explaining things
+						in more detail, possibly giving some background about the issue
+						being fixed, etc etc.
+					</p>
+					<p style="text-align:left;font-size:0.6em">
+						The body of the commit message can be several paragraphs, and
+						please do proper word-wrap and keep columns shorter than about
+						74 characters or so. That way "git log" will show things
+						nicely even when it's indented.
+					</p>
+					<p style="text-align:left;font-size:0.6em">
+						Make sure you explain your solution and why you're doing what you're
+						doing, as opposed to describing what you're doing. Reviewers and your
+						future self can read the patch, but might not understand why a
+						particular solution was implemented.
+					</p>
+					<p style="text-align:left;font-size:0.6em">
+						<b>Reported-by:</b> whoever-reported-it<br/>
+						<b>Signed-off-by:</b> Your Name <youremail@yourhost.com>
+					</p>
+					<a href="https://github.com/torvalds/subsurface-for-dirk/blob/master/README#L92-L112" style="text-align:left;font-size:0.5em">
+						https://github.com/torvalds/subsurface-for-dirk/blob/master/README#L92-L112
+					</a>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>log</h2>
+					<section>
+						<pre><code data-trim>
+							git log --oneline
+						</code></pre>
+						<pre><code data-trim>
+							a9c4054 (HEAD -> php7, vonglasow/php7) chore(php) Remove empty files
+							922a0ef chore(doc) Remove phpdoc
+							8feae89 chore(doc) Remove phpdoc
+							8c97f88 chore(doc) Remove phpdoc
+							471048a chore(doc) Remove phpdoc
+							c582137 fix(tests) Fix tests
+							e9eef02 chore(php) Update code to PHP 7.1
+							ba3fa3e chore(php) Move to PHP 7
+							aca338a (vonglasow/supported-version, origin/master, origin/HEAD, master) chore(composer) add PHP version requirement
+							7150785 (tag: 1.17.05.16, vonglasow/master) Prepare 1.17.05.16.
+							311a733 Arithmetic: Add more constants.
+							92a7644 Merge pull request #1 from Metalaka/constants
+							91ef70d Add INFINITE constant to Aritmetic
+							b88b213 (tag: 1.17.01.13) Prepare 1.17.01.13.
+						</code></pre>
+					</section>
+					<section>
+						<pre><code data-trim>
+							git log --author vonglasow
+						</code></pre>
+						<pre><code data-trim>
+							commit 092067735eae38346efa338b6331180347340237
+							Author: Alexis von Glasow &lt;vonglasow@gmail.com>
+							Date:   Mon Jul 2 14:55:31 2018 +0200
+							
+							    refactor fixup
+							
+							commit f2d5705a6fcdf830a1b8e7102ed9714d576bc976
+							Author: Alexis von Glasow &lt;vonglasow@gmail.com>
+							Date:   Tue May 22 12:32:35 2018 +0200
+							
+							    Refactor
+							
+						</code></pre>
+					</section>
+					<section>
+						<pre><code data-trim>
+							git shortlog -sne
+						</code></pre>
+						<pre><code data-noescape data-trim>
+							118  Ivan Enderlin &lt;ivan.enderlin@hoa-project.net>
+							 11  Alexis von Glasow &lt;ashgenesis@gmail.com>
+							  4  Marc Gratch &lt;me@marcgratch.com>
+							  3  Zack Katz &lt;zack@katzwebservices.com>
+							  1  Juha Remes &lt;jremes@outlook.com>
+							  1  Julien BIANCHI &lt;contact@jubianchi.Fr>
+							  1  Metalaka &lt;matthieu.de.laubrie@gmail.com>
+							  1  Stéphane HULARD &lt;s.hulard@chstudio.fr>
+							  1  Stéphane PY &lt;py.stephane1@gmail.com>
+							  1  Timothée Barray &lt;tim@amicalement-web.net>
+							  1  hywan &lt;devnull@localhost>
+							  1  jubianchi &lt;contact@jubianchi.fr>
+							  1  rparpa &lt;remi.parpaillon@gmail.com>
+							  1  Cédric Dugat &lt;cedric@dugat.me>
+							  1  Edson Medina &lt;edsonmedina@gmail.com>
+						</code></pre>
+					</section>
+					<section>
+						<pre><code data-trim style="font-size:0.6em">
+							git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(cyan)&lt;%an>%Creset' --abbrev-commit --date=relative --all
+						</code></pre>
+						<pre><code data-trim>
+							* aca338a - (vonglasow/supported-version, origin/master, origin/HEAD, master) chore(composer) add PHP version requirement (1 year, 1 month ago) &lt;Alexis von Glasow>
+							* 7150785 - (tag: 1.17.05.16, vonglasow/master) Prepare 1.17.05.16. (1 year, 4 months ago) &lt;Ivan Enderlin>
+							*   311a733 - Arithmetic: Add more constants. (1 year, 7 months ago) &lt;Ivan Enderlin>
+							|\
+							| *   92a7644 - Merge pull request #1 from Metalaka/constants (1 year, 7 months ago) &lt;Julien BIANCHI>
+							| |\
+							| | * 91ef70d - Add INFINITE constant to Aritmetic (1 year, 8 months ago) &lt;Metalaka>
+							| |/
+							| * 880cd9d - Added constants to Arithmetic (2 years, 6 months ago) &lt;Juha Remes>
+							* | b88b213 - (tag: 1.17.01.13) Prepare 1.17.01.13. (1 year, 8 months ago) &lt;Ivan Enderlin>
+							* | a06560b - (vonglasow/incoming) Quality: Happy new year! (1 year, 8 months ago) &lt;Alexis von Glasow>
+							* |   2c1c71e - Documentation: Fix a typo. (1 year, 10 months ago) &lt;Ivan Enderlin>
+							|\ \
+							| * | f6f64ce - Typo (1 year, 10 months ago) &lt;Edson Medina>
+							* | | f8dd3a4 - Documentation: Add PSIH & PMSIpilot as projects. (1 year, 10 months ago) &lt;Ivan Enderlin>
+							|/ /
+							* | b76e2ba - Test: Fix namespaces. (1 year, 10 months ago) &lt;Ivan Enderlin>
+							* | 0524be6 - Test: Add the `Decorrelated` interface. (1 year, 10 months ago) &lt;Ivan Enderlin>
+							* | 1642721 - Documentation: Add a related project. (1 year, 11 months ago) &lt;Ivan Enderlin>
+							* | fa78b0c - Documentation: New `README.md` file. (1 year, 11 months ago) &lt;Ivan Enderlin>
+						</code></pre>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>diff</h2>
+					<pre><code data-trim>
+						git diff commit
+						git diff commit..commit
+						git diff --cached
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>branch</h2>
+					<pre><code data-trim>
+						git branch mabranche
+						git branch my2.6.14 v2.6.14
+						git branch -m mybranch
+						git branch -D mybranch
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>checkout</h2>
+					<pre><code data-trim>
+						git checkout commit file
+						git checkout .
+						git checkout -b mybranch upstream/mybranch
+						git checkout mybranch
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>merge</h2>
+						<pre><code data-trim>
+							git merge mybranch
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>3 way merge</h2>
+						<img data-src="assets/images/3-way-merge.png" />
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>Fast forward</h2>
+						<img height=538 data-src="assets/images/merge-fast-forward.svg" />
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>revert</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git revert commit
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git show aca338a53f3a6100e1049b9f3a8a32cfa0aa26e3
+							commit aca338a53f3a6100e1049b9f3a8a32cfa0aa26e3 (origin/master, origin/HEAD)
+							Author: Alexis von Glasow &lt;ashgenesis@gmail.com>
+							Date:   Fri Aug 4 00:16:35 2017 +0200
+							
+							    chore(composer) add PHP version requirement
+							
+							    Define minimal supported version of PHP needed into composer.json
+							
+							    Address hoaproject/Central#70.
+							
+							diff --git a/composer.json b/composer.json
+							index ade57f4..0850833 100644
+							--- a/composer.json
+							+++ b/composer.json
+							@@ -24,6 +24,7 @@
+							         "source": "https://central.hoa-project.net/Resource/Library/Math"
+							     },
+							     "require": {
+							+        "php"            : ">=5.5.0",
+							         "hoa/compiler"   : "~3.0",
+							         "hoa/consistency": "~1.0",
+							         "hoa/exception"  : "~1.0",
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git show 98d590101b33e95420a8b1505938e1c61d0271eb
+							commit 98d590101b33e95420a8b1505938e1c61d0271eb (HEAD -> master)
+							Author: Alexis von Glasow &lt;vonglasow@gmail.com>
+							Date:   Tue Sep 4 00:16:17 2018 +0200
+							
+							    Revert "chore(composer) add PHP version requirement"
+							
+							    This reverts commit aca338a53f3a6100e1049b9f3a8a32cfa0aa26e3.
+							
+							diff --git a/composer.json b/composer.json
+							index 0850833..ade57f4 100644
+							--- a/composer.json
+							+++ b/composer.json
+							@@ -24,7 +24,6 @@
+							         "source": "https://central.hoa-project.net/Resource/Library/Math"
+							     },
+							     "require": {
+							-        "php"            : ">=5.5.0",
+							         "hoa/compiler"   : "~3.0",
+							         "hoa/consistency": "~1.0",
+							         "hoa/exception"  : "~1.0",
+						</code></pre>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>reset</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git reset --hard
+							git reset
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							On branch master
+							Your branch is up to date with 'origin/master'.
+							
+							Changes to be committed:
+							  (use "git reset HEAD &lt;file>..." to unstage)
+							
+								modified:   index.html
+							
+							Untracked files:
+							  (use "git add &lt;file>..." to include in what will be committed)
+							
+								assets/
+								lib/css/agate.css
+						
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							On branch master
+							Your branch is up to date with 'origin/master'.
+							
+							Changes not staged for commit:
+							  (use "git add &lt;file>..." to update what will be committed)
+							  (use "git checkout -- &lt;file>..." to discard changes in working directory)
+							
+								modified:   index.html
+							
+							Untracked files:
+							  (use "git add &lt;file>..." to include in what will be committed)
+							
+								assets/
+								lib/css/agate.css
+						</code></pre>
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>pull</h2>
+					<pre><code data-trim>
+						git pull = git fetch + merge
+						git pull --rebase = git fetch + rebase
+						git config --global branch.autosetuprebase always
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>cherry-pick</h2>
+					<pre><code data-trim>
+						git cherry-pick -ex &lt;commit>
+					</code></pre>
+					<img data-src="assets/images/cherry-pick.png" />
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>rebase</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git rebase master
+						</code></pre>
+						<img height="450" data-src="assets/images/rebase.png" />
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							# Commands:¬
+							# p, pick = use commit¬
+							# r, reword = use commit, but edit the commit message¬
+							# e, edit = use commit, but stop for amending¬
+							# s, squash = use commit, but meld into previous commit¬
+							# f, fixup = like "squash", but discard this commit's log message¬
+							# x, exec = run command (the rest of the line) using shell¬
+							# d, drop = remove commit¬
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<img height=538 data-src="assets/images/squash.svg" />
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>push</h2>
+					<pre><code data-trim>
+						git push -u origin mybranch
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>reflog</h2>
+					<pre><code data-trim>
+						git reflog
+						22af611 (HEAD -> git, origin/git) HEAD@{0}: commit (amend): git
+						39ab71f (master) HEAD@{1}: checkout: moving from master to git
+						39ab71f (master) HEAD@{2}: commit: git
+						249f013 (origin/master, origin/HEAD) HEAD@{3}: clone: from git@github.com:vonglasow/reveal.js.git
+					</code></pre>
+					<pre><code data-trim>
+						git reset --hard &lt;commit>
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>bisect</h2>
+					<pre><code data-trim>
+						git bisect start¬
+						git bisect bad¬
+						git bisect good &lt;goodcommit>¬
+						Bisecting: 675 revisions left to test after this (roughly 10 steps)¬
+						git bisect run &lt;command>¬
+					</code></pre>
+					<br />
+					<img data-src="assets/images/3-way-merge-bisect.png" />
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>archive</h2>
+					<pre><code data-trim>
+						git archive -o file.tar.gz HEAD
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>clean</h2>
+					<pre><code data-trim>
+						git clean -fdn #remove untracked files
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>Garbage Collector</h2>
+					<pre><code data-trim>
+						git gc¬
+						Counting objects: 854, done.¬
+						Delta compression using up to 4 threads.¬
+						Compressing objects: 100% (719/719), done.¬
+						Writing objects: 100% (854/854), done.¬
+						Total 854 (delta 480), reused 352 (delta 0)¬
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>Merge Tool</h2>
+					<pre><code data-trim>
+						git mergetool
+					</code></pre>
+					<img height=450 data-src="assets/images/mergetool.png" />
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>fsck</h2>
+					<pre><code data-trim>
+						git fsck --verbose --progress --strict
+					</code></pre>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>Remotes</h2>
+					<section data-background-image=assets/images/bg.jpg>
+						<pre><code data-trim>
+							git remote -v                                                                                                                                                                         master ⬆ ◼
+							origin	git@github.com:hoaproject/Math.git (fetch)
+							origin	git@github.com:hoaproject/Math.git (push)
+							vonglasow	git@github.com:vonglasow/Math.git (fetch)
+							vonglasow	git@github.com:vonglasow/Math.git (push)
+						</code></pre>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<img height=538 data-src="assets/images/git-remote.svg" />
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>Workflow</h2>
+						<ul>
+							<li>Centralisé</li>
+							<li>Feature branch</li>
+							<li>Git flow</li>
+							<li>Fork</li>
+						</ul>
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>Centralisé</h2>
+						<img height=538 data-src="assets/images/centralized.svg" />
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>Feature branch</h2>
+						<img height=538 data-src="assets/images/feature-branch.png" />
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>Git flow</h2>
+						<img height=538 data-src="assets/images/git-flow.svg" />
+					</section>
+					<section data-background-image=assets/images/bg.jpg>
+						<h2>Git fork flow</h2>
+						<img height=538 data-src="assets/images/git-fork-flow.jpeg" />
+					</section>
+				</section>
+				<section data-background-image=assets/images/bg.jpg>
+					<h2>Ressources</h2>
+					<ul style="text-align:left;font-size:0.6em">
+						<li>https://www.grafikart.fr/formations/git</li>
+						<li>https://fr.atlassian.com/git/tutorials/setting-up-a-repository</li>
+						<li>https://fr.atlassian.com/git/tutorials/comparing-workflows</li>
+						<li>https://learngitbranching.js.org</li>
+						<li>https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain</li>
+						<li>https://github.com/torvalds/subsurface-for-dirk/blob/master/README#L92-L112</li>
+						<li>https://github.com/torvalds/linux/pull/17#issuecomment-5659933</li>
+						<li>https://yarchive.net/comp/linux/commit_messages.html</li>
+						<li>https://github.com/phpro/grumphp</li>
+						<li>https://github.com/vonglasow/gitconfig</li>
+					</ul>
+				</section>
 			</div>
 		</div>
-
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
-
 		<script>
 			// More info about config & dependencies:
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+				transition: 'none',
+				minScale: 0.2,
+				maxScale: 1.5,
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
